@@ -1,0 +1,45 @@
+---
+- name: RedHat | Check Requirements
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - epel-release
+    - facter
+    - net-snmp
+    - "{{ ( (ansible_facts.distribution_major_version | int) < 8) | ternary('python-pip','python3-pip') }}"
+    - "{{ ( (ansible_facts.distribution_major_version | int) < 8) | ternary('libselinux-python','python3-libselinux') }}"
+    
+- name: RedHat | Install zabbix-api module
+  pip:
+    name: zabbix-api
+
+- name: RedHat | Install Zabbix Repository
+  yum:
+    name: http://repo.zabbix.com/zabbix/{{zabbix_version}}/rhel/{{ansible_distribution_major_version}}/{{ansible_architecture}}/zabbix-release-{{zabbix_version}}-1.el{{ansible_distribution_major_version}}.noarch.rpm
+    state: installed
+    disable_gpg_check: true
+  when: zabbix_installed.stat.exists == False
+
+- name: RedHat | Install the Python MySQLB module
+  pip: 
+    name: MySQL-python
+  when:
+    - install_mysql_plugin == true
+    - mysql_installed.stat.exists == True
+
+- name: RedHat | Install Zabbix Agent
+  yum:
+    name: zabbix-agent
+    state: installed
+    disable_gpg_check: true
+  when: zabbix_installed.stat.exists == False
+
+- name: RedHat | Copy zabbix agent sudoers file
+  copy:
+    src: files/sudoers.d/zabbix
+    dest: /etc/sudoers.d/zabbix
+    owner: root
+    validate: 'visudo -cf %s'
+  notify: restart_zabbix_agent
+

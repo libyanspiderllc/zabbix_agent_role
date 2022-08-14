@@ -1,0 +1,43 @@
+---
+- name: Debian | Check Requirements
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libmcrypt4
+    - libgetopt-mixed-perl
+    - ksh
+    - facter
+    - snmpd
+
+- name: Debian | Download Zabbix Repository
+  get_url:
+    url: http://repo.zabbix.com/zabbix/{{zabbix_version}}/{{ansible_distribution | lower}}/pool/main/z/zabbix-release/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
+    dest: /tmp/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
+
+- name: Debian | Install Zabbix Repository
+  apt:
+    deb: /tmp/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
+    state: present
+  when: zabbix_installed.stat.exists == False
+
+- name: Debian | Install Zabbix Agent
+  package:
+    name: zabbix-agent
+    state: present
+    update_cache: yes
+  when: zabbix_installed.stat.exists == False
+
+- name: Debian | Install Sudo
+  package:
+    name: sudo
+    state: present
+  when: zabbix_installed.stat.exists == False and ansible_distribution_release == 'stretch' or ansible_distribution_release == 'buster' 
+
+- name: Debian | Copy zabbix agent sudoers file
+  copy:
+    src: files/sudoers.d/zabbix
+    dest: /etc/sudoers.d/zabbix
+    owner: root
+    validate: 'visudo -cf %s'
+  notify: restart_zabbix_agent

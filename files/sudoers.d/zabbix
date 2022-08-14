@@ -1,0 +1,42 @@
+zabbix ALL=(ALL) NOPASSWD: /sbin/iptables -L INPUT -n
+zabbix ALL=(ALL) NOPASSWD: /sbin/iptables -S fail2ban-permanent
+zabbix ALL=(ALL) NOPASSWD: /sbin/iptables -S fail2ban-banned
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/nscd -g
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/smartctl
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/rabbitmqctl
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/php /etc/zabbix/bin/rabbit.php
+apache ALL=(ALL) NOPASSWD: /usr/bin/scanimage
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/exim -bp
+zabbix ALL=(ALL) NOPASSWD: /opt/dell/srvadmin/bin/omreport
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/bcu
+zabbix ALL=(ALL) NOPASSWD: /sbin/powermt
+zabbix ALL=(ALL) NOPASSWD: /bin/find /var/spool/postfix/ -type f
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/httpd -v
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/dmidecode
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/stat
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/md5sum
+zabbix ALL=(ALL) NOPASSWD: /bin/find /var/lib/mysql/ -type f -printf %p+%s=
+zabbix ALL=(ALL) NOPASSWD: /bin/find /san/mysql-fs/mysql/ -type f -printf %p+%s=
+zabbix ALL=(ALL) NOPASSWD: /etc/zabbix/bin/haproxy.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/du
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/blacklist.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/facter
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/httpd
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/hdd_discovery.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/check_csf.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/suspend_email.py
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/cpanel_users_discovery.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/local/cpanel/bin/uapi
+zabbix ALL=(ALL) NOPASSWD: /usr/sbin/csf
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/mpt_volume_discovery.py
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/mpt_disk_discovery.py
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/mpt_volume.py
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/mpt-status
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/mpt_disk.py
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/adaptec-raid.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/pkill
+Cmnd_Alias LSISTORCLI=/opt/MegaRAID/storcli/storcli64 /call show all j,/opt/MegaRAID/storcli/storcli64 /call/vall show all j,/opt/MegaRAID/storcli/storcli64 /call/eall/sall show all j,/opt/MegaRAID/storcli/storcli64 show all j,/opt/MegaRAID/storcli/storcli64 /call/cv show all j,/opt/MegaRAID/storcli/storcli64 /call/bbu show all j
+zabbix ALL=(root) NOPASSWD: LSISTORCLI
+Cmnd_Alias LSIPERCCLI=/opt/MegaRAID/perccli/perccli64 /call show all j,/opt/MegaRAID/perccli/perccli64 /call/vall show all j,/opt/MegaRAID/perccli/perccli64 /call/eall/sall show all j,/opt/MegaRAID/perccli/perccli64 show all j,/opt/MegaRAID/perccli/perccli64 /call/cv show all j,/opt/MegaRAID/perccli/perccli64 /call/bbu show all j
+zabbix ALL=(root) NOPASSWD: LSIPERCCLI
+Defaults:zabbix        !requiretty

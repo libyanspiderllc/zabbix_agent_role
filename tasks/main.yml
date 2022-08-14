@@ -1,0 +1,49 @@
+---
+- name: Validate required variables are defined
+  fail:
+    msg: "Required variable {{item}} has not been provided"
+  when: vars[item] is undefined
+  loop:
+    - zabbix_server
+    - zabbix_server_ip
+    - zabbix_version
+    - zabbix_minor_version
+
+- name: Check if Zabbix is already installed
+  stat: path=/usr/sbin/zabbix_agentd
+  register: zabbix_installed
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+
+- name: Check if nagios is installed
+  stat: path=/usr/local/nagios/bin/nrpe
+  register: nagios_installed
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+
+- name: Check if mysql_config is installed
+  stat: path=/usr/bin/mysql_config
+  register: mysql_installed
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+
+- name: Include tasks | Redaht
+  include_tasks: setup-Redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Include tasks | Debian
+  include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Include tasks | Ubuntu
+  include_tasks: setup-Ubuntu.yml
+  when: ansible_os_family == 'Ubuntu'  
+
+- name: Include tasks | Linux
+  include_tasks: setup-Linux.yml
+  when: ansible_os_family == 'RedHat' or ansible_os_family == 'Debian'
+
+- name: Included tasks | Windows
+  include_tasks: setup-Windows.yml
+  when: ansible_os_family == 'Windows'
+
+- name: Add host to Zabbix Server
+  include_tasks: update-zabbix.yml
+  when: add_host_to_zabbix_server is true

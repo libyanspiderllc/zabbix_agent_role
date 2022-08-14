@@ -1,0 +1,101 @@
+---
+- name: Linux | Copy Zabbix Agent Configuration
+  template:
+    src: templates/zabbix_agentd.conf.j2
+    dest: /etc/zabbix/zabbix_agentd.conf
+  notify: restart_zabbix_agent
+
+- name: Linux | Create zabbix user home directory
+  file:
+    name: /var/lib/zabbix
+    owner: zabbix
+    group: zabbix
+    state: directory
+
+- name: Linux | Check if Net-SNMP is installed
+  stat:
+    path: /etc/snmp/snmpd.conf
+  register: snmpd_installed
+
+- name: Linux | Add Zabbix Server to Net-SNMP config
+  lineinfile:
+    path: /etc/snmp/snmpd.conf
+    state: present
+    line: com2sec notConfigUser {{zabbix_server_ip}} {{snmpd_community}}
+  when: snmpd_installed.stat.exists == true and snmpd_community|length > 0
+  notify:
+    - restart snmpd
+
+- name: Linux | Copy zabbix agent user parameters files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/zabbix/zabbix_agentd.d/
+    owner: root
+  with_fileglob:
+    - files/zabbix_agentd.conf.d/*
+  notify: restart_zabbix_agent
+
+- name: Linux | Copy zabbix binary scripts
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/sbin/
+    owner: zabbix
+    mode: 755
+  with_fileglob:
+    - files/bin/*
+  notify: restart_zabbix_agent
+
+- name: Linux | Check if .my.cnf is already generated
+  stat: path=/var/lib/zabbix/.my.cnf
+  register: mysql_configured
+
+- name: Linux | Generate random password for zabbix mysql account
+  command: "openssl rand -base64 15"
+  register: random_password
+  when:
+    - install_mysql_plugin == true
+    - mysql_configured.stat.exists == False
+    - mysql_installed.stat.exists == True
+
+- name: Linux | Save mysql random password for later user
+  set_fact:
+    mysql_password: "{{ random_password.stdout }}"
+  when:
+    - install_mysql_plugin == true
+    - mysql_configured.stat.exists == False
+    - mysql_installed.stat.exists == True
+
+- name: Linux | Create Zabbix MySQL User
+  mysql_user:
+    name: "zabbix"
+    password: "{{ mysql_password }}"
+    priv: "*.*:ALL"
+  when:
+    - install_mysql_plugin == true
+    - mysql_configured.stat.exists == False
+    - mysql_installed.stat.exists == True
+
+- name: Linux | Upload custom my.cnf for MySQL user
+  template:
+    src: templates/my.cnf.j2
+    dest: /var/lib/zabbix/.my.cnf
+  notify: restart_zabbix_agent
+  when:
+    - install_mysql_plugin == true
+    - mysql_configured.stat.exists == False
+    - mysql_installed.stat.exists == True
+
+- name: Linux | Add zabbix user to nagios group
+  command: usermod zabbix -G nagios
+  when: nagios_installed.stat.exists == True
+
+- name: Linux | Configure zabbix_agent for autostart
+  service:
+    name: zabbix-agent
+    enabled: yes
+
+- name: Linux | Enable SNMP Daeomn Service
+  service:
+    name: snmpd
+    state: started
+    enabled: yes

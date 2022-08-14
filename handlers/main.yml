@@ -1,0 +1,16 @@
+---
+# handlers file for zabbix-agent-role
+- name: restart_zabbix_agent
+  service:
+    name: zabbix-agent
+    state: restarted
+
+- name: win_restart_snmpd
+  win_service:
+    name: "Net-SNMP Agent"
+    state: restarted
+
+- name: restart snmpd
+  service:
+    name: snmpd
+    state: restarted

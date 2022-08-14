@@ -1,0 +1,35 @@
+---
+- name: Windows | Download Zabbix Installer
+  win_get_url:
+    url: https://cdn.zabbix.com/zabbix/binaries/stable/{{zabbix_version}}/{{zabbix_version}}.{{zabbix_minor_version}}/zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}-windows-amd64-openssl.msi
+    dest: C:\Users\Administrator\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
+    force: no
+
+- name: Windows | Install Zabbix Package
+  win_package:
+    path: C:\Users\Administrator\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
+    state: present
+    wait: True
+    arguments: "HOSTNAME={{ansible_fqdn}}.server.ly HOSTNAMEFQDN=1 SERVER={{zabbix_server}} RMTCMD=1 /qn"
+    creates_path: C:\Program Files\Zabbix Agent\zabbix_agentd.exe
+  register: zabbix_installed
+
+- name: Windows | Create firewall rule to allow connections to Zabbix port
+  win_firewall_rule:
+    name: Allow connections from Zabbix
+    localport: 10050
+    action: allow
+    remoteip: "{{zabbix_server_ip}}"
+    profiles: domain,private,public
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+
+- name: Windows | Add Zabbix Server IP to SNMP Allowed hosts
+  win_lineinfile:
+    path: C:\usr\etc\snmp\snmpd.conf
+    line: "rocommunity public {{zabbix_server_ip}}"
+    state: present
+  notify: win_restart_snmpd
+  ignore_errors: yes
