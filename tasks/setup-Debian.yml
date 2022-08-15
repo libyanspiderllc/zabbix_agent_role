@@ -8,7 +8,6 @@
     - libgetopt-mixed-perl
     - ksh
     - facter
-    - snmpd
 
 - name: Debian | Download Zabbix Repository
   get_url:

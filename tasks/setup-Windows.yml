@@ -14,18 +14,6 @@
     creates_path: C:\Program Files\Zabbix Agent\zabbix_agentd.exe
   register: zabbix_installed
 
-- name: Windows | Create firewall rule to allow connections to Zabbix port
-  win_firewall_rule:
-    name: Allow connections from Zabbix
-    localport: 10050
-    action: allow
-    remoteip: "{{zabbix_server_ip}}"
-    profiles: domain,private,public
-    direction: in
-    protocol: tcp
-    state: present
-    enabled: yes
-
 - name: Windows | Add Zabbix Server IP to SNMP Allowed hosts
   win_lineinfile:
     path: C:\usr\etc\snmp\snmpd.conf
