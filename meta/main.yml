@@ -52,7 +52,7 @@ galaxy_info:
     #       Maximum 20 tags per role.
 
 dependencies:
-  - role: shumbashi.firewall_ansible_role
+  - role: libyanspider.firewall_ansible_role
     vars:
       firewall_rich_rules:
         - {"family": "ipv4", "source_address": "{{zabbix_server_ip}}/32", "dest_port": "161", "protocol": "udp", "comment": "Zabbix - SNMP"}
