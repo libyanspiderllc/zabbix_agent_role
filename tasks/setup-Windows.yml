@@ -2,22 +2,28 @@
 - name: Windows | Download Zabbix Installer
   win_get_url:
     url: https://cdn.zabbix.com/zabbix/binaries/stable/{{zabbix_version}}/{{zabbix_version}}.{{zabbix_minor_version}}/zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}-windows-amd64-openssl.msi
-    dest: C:\Users\Administrator\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
+    dest: C:\Users\{{ansible_user}}\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
     force: no
 
 - name: Windows | Install Zabbix Package
   win_package:
-    path: C:\Users\Administrator\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
+    path: C:\Users\{{ansible_user}}\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
     state: present
-    wait: True
+    wait_for_children: True
     arguments: "HOSTNAME={{ansible_fqdn}}.server.ly HOSTNAMEFQDN=1 SERVER={{zabbix_server}} RMTCMD=1 /qn"
     creates_path: C:\Program Files\Zabbix Agent\zabbix_agentd.exe
   register: zabbix_installed
 
+- name: Windows | Check if Net-SNMP is installed
+  win_stat:
+    path: C:\usr\etc\snmp\snmpd.conf
+  register: snmpd_installed
+
 - name: Windows | Add Zabbix Server IP to SNMP Allowed hosts
   win_lineinfile:
     path: C:\usr\etc\snmp\snmpd.conf
-    line: "rocommunity public {{zabbix_server_ip}}"
+    line: "rocommunity {{snmpd_community}} {{zabbix_server_ip}}"
     state: present
+  when: snmpd_installed.stat.exists == true and snmpd_community|length > 0
   notify: win_restart_snmpd
   ignore_errors: yes

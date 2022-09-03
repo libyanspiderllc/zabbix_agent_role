@@ -1,6 +1,6 @@
 ---
 - name: Debian | Check Requirements
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items:
@@ -10,31 +10,31 @@
     - facter
 
 - name: Debian | Download Zabbix Repository
-  get_url:
-    url: http://repo.zabbix.com/zabbix/{{zabbix_version}}/{{ansible_distribution | lower}}/pool/main/z/zabbix-release/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
+  ansible.builtin.get_url:
+    url: http://repo.zabbix.com/zabbix/{{zabbix_version}}/{{ansible_distribution | lower}}/pool/main/z/zabbix-release/zabbix-release_{{zabbix_version}}-1+{{ansible_distribution_release}}_all.deb
     dest: /tmp/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
 
 - name: Debian | Install Zabbix Repository
-  apt:
+  ansible.builtin.apt:
     deb: /tmp/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
     state: present
   when: zabbix_installed.stat.exists == False
 
 - name: Debian | Install Zabbix Agent
-  package:
+  ansible.builtin.package:
     name: zabbix-agent
     state: present
-    update_cache: yes
+    update_cache: true
   when: zabbix_installed.stat.exists == False
 
 - name: Debian | Install Sudo
-  package:
+  ansible.builtin.package:
     name: sudo
     state: present
   when: zabbix_installed.stat.exists == False and ansible_distribution_release == 'stretch' or ansible_distribution_release == 'buster' 
 
 - name: Debian | Copy zabbix agent sudoers file
-  copy:
+  ansible.builtin.copy:
     src: files/sudoers.d/zabbix
     dest: /etc/sudoers.d/zabbix
     owner: root

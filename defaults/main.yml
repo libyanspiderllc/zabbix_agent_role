@@ -1,7 +1,7 @@
 ---
 # defaults file for zabbix-agent-role
-zabbix_server: zabbix.server.ly # (required) Set to hostname of Zabbix Server. Example: zabbix.mydomain.com
-zabbix_server_ip: 95.217.85.43 # (required) Set to Public IP Address of Zabbix Server
+zabbix_server: '' # (required) Set to hostname of Zabbix Server. Example: zabbix.mydomain.com
+zabbix_server_ip: '' # (required) Set to Public IP Address of Zabbix Server
 zabbix_version: 5.0 # (required) Set Zabbix Agent Major Version you would like to install. Example: 5.0
 zabbix_minor_version: 26 # (required) Set Zabbix Agent Minor Version you would like to install. Example: 26
 snmpd_community: 'public' # (optional) Set if you would like to configure Net-SNMP to allow the community from Zabbix server IP
