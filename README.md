@@ -35,7 +35,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: shumbashi.zabbix-agent-role, zabbix_server: zabbix.mydomain.com,  zabbix_server_ip: 127.0.0.1}
+         - { role: libyanspider.zabbix_agent_role, zabbix_server: zabbix.mydomain.com,  zabbix_server_ip: 127.0.0.1}
 
 License
 -------
