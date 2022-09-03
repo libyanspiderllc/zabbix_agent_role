@@ -25,7 +25,7 @@ Role Variables
 Dependencies
 ------------
 
-- shumbashi.firewall_ansible_role
+- libyanspider.firewall_ansible_role
 
 
 Example Playbook
