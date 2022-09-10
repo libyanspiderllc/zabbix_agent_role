@@ -1,6 +1,6 @@
 ---
 - name: RedHat | Check Requirements
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: present
   with_items:
@@ -8,34 +8,34 @@
     - facter
     - "{{ ( (ansible_facts.distribution_major_version | int) < 8) | ternary('python-pip','python3-pip') }}"
     - "{{ ( (ansible_facts.distribution_major_version | int) < 8) | ternary('libselinux-python','python3-libselinux') }}"
-    
-# - name: RedHat | Install zabbix-api module
-#   pip:
-#     name: zabbix-api
+
+- name: RedHat | Install zabbix-api module
+  ansible.builtin.pip:
+    name: zabbix-api
 
 - name: RedHat | Install Zabbix Repository
-  yum:
+  ansible.builtin.yum:
     name: http://repo.zabbix.com/zabbix/{{zabbix_version}}/rhel/{{ansible_distribution_major_version}}/{{ansible_architecture}}/zabbix-release-{{zabbix_version}}-1.el{{ansible_distribution_major_version}}.noarch.rpm
     state: installed
     disable_gpg_check: true
   when: zabbix_installed.stat.exists == False
 
 - name: RedHat | Install the Python MySQLB module
-  pip: 
+  ansible.builtin.pip: 
     name: MySQL-python
   when:
     - install_mysql_plugin == true
     - mysql_installed.stat.exists == True
 
 - name: RedHat | Install Zabbix Agent
-  yum:
+  ansible.builtin.yum:
     name: zabbix-agent
     state: installed
     disable_gpg_check: true
   when: zabbix_installed.stat.exists == False
 
 - name: RedHat | Copy zabbix agent sudoers file
-  copy:
+  ansible.builtin.copy:
     src: files/sudoers.d/zabbix
     dest: /etc/sudoers.d/zabbix
     owner: root
@@ -43,22 +43,22 @@
   notify: restart_zabbix_agent
 
 - name: RedHat | Check if CloudLinux is installed
-  stat:
+  ansible.builtin.stat:
     path: /usr/bin/cldetect
   register: cldetect_check
   changed_when: false
   check_mode: false
 
 - name: RedHat | Create cloudlinux_installed variable.
-  set_fact:
+  ansible.builtin.set_fact:
     cloudlinux_installed: "{{ cldetect_check.stat.exists|bool }}"
   tags: always
 
 - name: RedHat | Add Zabbix User to clsupergid group
-  user:
+  ansible.builtin.user:
     name: zabbix
     append: true
     groups:
       - clsupergid
   when: cloudlinux_installed
-  notify: restart zabbix
+  notify: restart_zabbix_agent
