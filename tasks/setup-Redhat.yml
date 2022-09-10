@@ -9,9 +9,9 @@
     - "{{ ( (ansible_facts.distribution_major_version | int) < 8) | ternary('python-pip','python3-pip') }}"
     - "{{ ( (ansible_facts.distribution_major_version | int) < 8) | ternary('libselinux-python','python3-libselinux') }}"
     
-- name: RedHat | Install zabbix-api module
-  pip:
-    name: zabbix-api
+# - name: RedHat | Install zabbix-api module
+#   pip:
+#     name: zabbix-api
 
 - name: RedHat | Install Zabbix Repository
   yum:
@@ -42,3 +42,23 @@
     validate: 'visudo -cf %s'
   notify: restart_zabbix_agent
 
+- name: RedHat | Check if CloudLinux is installed
+  stat:
+    path: /usr/bin/cldetect
+  register: cldetect_check
+  changed_when: false
+  check_mode: false
+
+- name: RedHat | Create cloudlinux_installed variable.
+  set_fact:
+    cloudlinux_installed: "{{ cldetect_check.stat.exists|bool }}"
+  tags: always
+
+- name: RedHat | Add Zabbix User to clsupergid group
+  user:
+    name: zabbix
+    append: true
+    groups:
+      - clsupergid
+  when: cloudlinux_installed
+  notify: restart zabbix
