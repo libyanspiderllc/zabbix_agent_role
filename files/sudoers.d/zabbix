@@ -40,3 +40,4 @@ zabbix ALL=(root) NOPASSWD: LSISTORCLI
 Cmnd_Alias LSIPERCCLI=/opt/MegaRAID/perccli/perccli64 /call show all j,/opt/MegaRAID/perccli/perccli64 /call/vall show all j,/opt/MegaRAID/perccli/perccli64 /call/eall/sall show all j,/opt/MegaRAID/perccli/perccli64 show all j,/opt/MegaRAID/perccli/perccli64 /call/cv show all j,/opt/MegaRAID/perccli/perccli64 /call/bbu show all j
 zabbix ALL=(root) NOPASSWD: LSIPERCCLI
 Defaults:zabbix        !requiretty
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/cloudlinux_securelinks_status.sh
