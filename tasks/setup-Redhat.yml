@@ -22,7 +22,7 @@
 
 - name: RedHat | Install the Python MySQLB module
   ansible.builtin.pip: 
-    name: MySQL-python
+    name: PyMySQL
   when:
     - install_mysql_plugin == true
     - mysql_installed.stat.exists == True
