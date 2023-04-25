@@ -26,7 +26,7 @@
   when:
     - install_mysql_plugin == true
     - mysql_installed.stat.exists == True
-    - ansible_pyhton.version.major == 2
+    - ansible_python.version.major == 2
 
 - name: RedHat | Install the Python 3 mysql-connector
   ansible.builtin.pip: 
@@ -34,7 +34,7 @@
   when:
     - install_mysql_plugin == true
     - mysql_installed.stat.exists == True
-    - ansible_pyhton.version.major == 3
+    - ansible_python.version.major == 3
 
 - name: RedHat | Install Zabbix Agent
   ansible.builtin.yum:
