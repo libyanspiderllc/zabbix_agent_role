@@ -20,12 +20,21 @@
     disable_gpg_check: true
   when: zabbix_installed.stat.exists == False
 
-- name: RedHat | Install the Python MySQLB module
+- name: RedHat | Install the Python 2 MySQLB module
   ansible.builtin.pip: 
     name: MySQL-python
   when:
     - install_mysql_plugin == true
     - mysql_installed.stat.exists == True
+    - ansible_pyhton.version.major == 2
+
+- name: RedHat | Install the Python 3 mysql-connector
+  ansible.builtin.pip: 
+    name: mysql-connector
+  when:
+    - install_mysql_plugin == true
+    - mysql_installed.stat.exists == True
+    - ansible_pyhton.version.major == 3
 
 - name: RedHat | Install Zabbix Agent
   ansible.builtin.yum:
