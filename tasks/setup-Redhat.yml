@@ -28,9 +28,9 @@
     - mysql_installed.stat.exists == True
     - ansible_python.version.major == 2
 
-- name: RedHat | Install the Python 3 mysql-connector
+- name: RedHat | Install the Python 3 PyMySQL
   ansible.builtin.pip: 
-    name: mysql-connector
+    name: PyMySQL
   when:
     - install_mysql_plugin == true
     - mysql_installed.stat.exists == True
