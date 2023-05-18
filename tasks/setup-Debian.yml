@@ -8,17 +8,41 @@
     - libgetopt-mixed-perl
     - ksh
     - facter
+  when: ansible_distribution_version != "22.04"
+
+- name: Debian | Check Requirements For Ubuntu 22.04
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libmcrypt4
+    - ksh
+    - facter
+  when: ansible_distribution_version == "22.04"
 
 - name: Debian | Download Zabbix Repository
   ansible.builtin.get_url:
     url: http://repo.zabbix.com/zabbix/{{zabbix_version}}/{{ansible_distribution | lower}}/pool/main/z/zabbix-release/zabbix-release_{{zabbix_version}}-1+{{ansible_distribution_release}}_all.deb
     dest: /tmp/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
+  when: ansible_distribution_version != "22.04"
+
+- name: Debian | Download Zabbix Repository For Ubuntu22.04
+  ansible.builtin.get_url:
+    url: http://repo.zabbix.com/zabbix/6.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.4-1+ubuntu22.04_all.deb
+    dest: /tmp/zabbix-release_6.4-1+ubuntu22.04_all.deb
+  when: ansible_distribution_version == "22.04"
 
 - name: Debian | Install Zabbix Repository
   ansible.builtin.apt:
     deb: /tmp/zabbix-release_{{zabbix_version}}-{{zabbix_minor_version}}+{{ansible_distribution_release}}_all.deb
     state: present
-  when: zabbix_installed.stat.exists == False
+  when: zabbix_installed.stat.exists == False and ansible_distribution_version != "22.04"
+
+- name: Debian | Install Zabbix Repository For Ubuntu 22.04
+  ansible.builtin.apt:
+    deb: /tmp/zabbix-release_6.4-1+ubuntu22.04_all.deb
+    state: present
+  when: zabbix_installed.stat.exists == False and ansible_distribution_version == "22.04"
 
 - name: Debian | Install Zabbix Agent
   ansible.builtin.package:
