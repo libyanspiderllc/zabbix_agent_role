@@ -71,3 +71,34 @@
       - clsupergid
   when: cloudlinux_installed
   notify: restart_zabbix_agent
+
+- name: Linux | Copy Cloudluinx user parameters files
+  copy:
+    src: "{{ item }}"
+    dest: /etc/zabbix/zabbix_agentd.d/
+    owner: root
+  with_fileglob:
+    - files/cloudlinux/cloudlinux.conf
+  when: cloudlinux_installed  
+  notify: restart_zabbix_agent
+
+- name: Linux | Copy Cloudlinux SecureLinks Link Traversal Protection scripts
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/sbin/
+    owner: zabbix
+    mode: 755
+  with_fileglob:
+    - files/cloudlinux/cloudlinux_securelinks_status.sh
+  when: cloudlinux_installed
+  notify: restart_zabbix_agent
+
+- name: RedHat | Allowing the Zabbix user to run cloudlinux_securelinks_status script
+  lineinfile:
+    path: /etc/sudoers.d/zabbix
+    line: 'zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/cloudlinux_securelinks_status.sh'
+    state: present
+    insertafter: EOF
+    validate: 'visudo -cf %s'
+    when: cloudlinux_installed
+  notify: restart_zabbix_agent
