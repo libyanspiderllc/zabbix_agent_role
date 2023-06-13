@@ -10,3 +10,6 @@ add_host_to_zabbix_server: false # (optional) Set to `true` if you would like th
 zabbix_server_url: '' # (optional) Set to Zabbix API URL. Example: https://zabbix.mydomain.com
 zabbix_server_login_user: '' # (optional) Set to Zabbix API User
 zabbix_server_login_password: '' # (optional) Set to Zabbix API Password
+zabbix_tip_server_ip: '' # (required) Set to hostname of Tripoli Zabbix Server
+zabbix_tip_server_url: '' # (required) Set to URL of Tripoli Zabbix Server
+zabbix_tip_server: '' # (required) Set to hostname of Tripoli Zabbix Server

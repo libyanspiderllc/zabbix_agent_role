@@ -57,3 +57,5 @@ dependencies:
       firewall_rich_rules:
         - {"family": "ipv4", "source_address": "{{zabbix_server_ip}}/32", "dest_port": "161", "protocol": "udp", "comment": "Zabbix - SNMP"}
         - {"family": "ipv4", "source_address": "{{zabbix_server_ip}}/32", "dest_port": "10050", "protocol": "tcp", "comment": "Zabbix - Agent"}
+        - {"family": "ipv4", "source_address": "{{zabbix_tip_server_ip}}/32", "dest_port": "161", "protocol": "udp", "comment": "Zabbix - SNMP"}
+        - {"family": "ipv4", "source_address": "{{zabbix_tip_server_ip}}/32", "dest_port": "10050", "protocol": "tcp", "comment": "Zabbix - Agent"}

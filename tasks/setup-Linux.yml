@@ -26,6 +26,15 @@
   notify:
     - restart snmpd
 
+- name: Linux | Add Tripoli Zabbix Server to Net-SNMP config
+  ansible.builtin.lineinfile:
+    path: /etc/snmp/snmpd.conf
+    state: present
+    line: com2sec notConfigUser {{zabbix_tip_server_ip}} {{snmpd_community}}
+  when: snmpd_installed.stat.exists == true and snmpd_community|length > 0
+  notify:
+    - restart snmpd
+
 - name: Linux | Copy zabbix agent user parameters files
   ansible.builtin.copy:
     src: "{{ item }}"

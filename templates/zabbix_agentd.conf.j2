@@ -92,7 +92,7 @@ EnableRemoteCommands=1
 # Default:
 # Server=
 
-Server={{zabbix_server}}
+Server={{zabbix_server}},{{zabbix_tip_server}}
 
 ### Option: ListenPort
 #	Agent will listen on this port for connections from the server.
@@ -133,7 +133,7 @@ Server={{zabbix_server}}
 # Default:
 # ServerActive=
 
-ServerActive={{zabbix_server}}
+ServerActive={{zabbix_server}},{{zabbix_tip_server}}
 
 ### Option: Hostname
 #	Unique, case sensitive hostname.

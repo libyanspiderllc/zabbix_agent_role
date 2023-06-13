@@ -10,7 +10,7 @@
     path: C:\Users\{{ansible_user}}\Downloads\zabbix_agent-{{zabbix_version}}.{{zabbix_minor_version}}_x64.msi
     state: present
     wait_for_children: True
-    arguments: "HOSTNAME={{ansible_fqdn}}.server.ly HOSTNAMEFQDN=1 SERVER={{zabbix_server}} RMTCMD=1 /qn"
+    arguments: "HOSTNAME={{ansible_fqdn}}.server.ly HOSTNAMEFQDN=1 SERVER={{zabbix_server}},{{zabbix_tip_server}} RMTCMD=1 /qn"
     creates_path: C:\Program Files\Zabbix Agent\zabbix_agentd.exe
   register: zabbix_installed
 
@@ -23,6 +23,15 @@
   win_lineinfile:
     path: C:\usr\etc\snmp\snmpd.conf
     line: "rocommunity {{snmpd_community}} {{zabbix_server_ip}}"
+    state: present
+  when: snmpd_installed.stat.exists == true and snmpd_community|length > 0
+  notify: win_restart_snmpd
+  ignore_errors: yes
+
+- name: Windows | Add Zabbix Tripoli Server IP to SNMP Allowed hosts
+  win_lineinfile:
+    path: C:\usr\etc\snmp\snmpd.conf
+    line: "rocommunity {{snmpd_community}} {{zabbix_tip_server_ip}}"
     state: present
   when: snmpd_installed.stat.exists == true and snmpd_community|length > 0
   notify: win_restart_snmpd

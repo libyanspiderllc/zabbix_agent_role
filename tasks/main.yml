@@ -8,6 +8,8 @@
     - zabbix_server_ip
     - zabbix_version
     - zabbix_minor_version
+    - zabbix_tip_server
+    - zabbix_tip_server_ip
 
 - name: Check if Zabbix is already installed
   stat: path=/usr/sbin/zabbix_agentd

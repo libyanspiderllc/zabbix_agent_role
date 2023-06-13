@@ -45,3 +45,51 @@
   ignore_errors: true
   vars:
      ansible_become: false
+
+- name: Linux | Update host on local zabbix server
+  local_action:
+    module: zabbix_host
+    server_url: "{{ zabbix_tip_server_url }}"
+    login_user: "{{ zabbix_server_login_user }}"
+    login_password: "{{ zabbix_server_login_password }}"
+    host_name: "{{ ansible_fqdn }}"
+    host_groups:
+      - Ansible-Provisioned
+    status: enabled
+    state: present
+    force: false
+    inventory_mode: automatic
+    interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: "{{ansible_default_ipv4.address}}"
+        dns: ""
+        port: 10050
+  when: ansible_os_family != 'Windows'
+  ignore_errors: true
+
+- name: Windows | Update host on local zabbix server
+  local_action:
+    module: zabbix_host
+    server_url: "{{ zabbix_tip_server_url }}"
+    login_user: "{{ zabbix_server_login_user }}"
+    login_password: "{{ zabbix_server_login_password }}"
+    host_name: "{{ ansible_hostname }}"
+    host_groups:
+      - Ansible-Provisioned
+    status: enabled
+    state: present
+    force: false
+    inventory_mode: automatic
+    interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: "{{ ansible_ip_addresses[0] }}"
+        dns: ""
+        port: 10050
+  when: ansible_os_family == 'Windows'
+  ignore_errors: true
+  vars:
+     ansible_become: false
