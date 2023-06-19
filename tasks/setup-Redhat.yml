@@ -100,5 +100,5 @@
     state: present
     insertafter: EOF
     validate: 'visudo -cf %s'
-    when: cloudlinux_installed
+  when: cloudlinux_installed
   notify: restart_zabbix_agent
