@@ -18,7 +18,14 @@
     name: http://repo.zabbix.com/zabbix/{{zabbix_version}}/rhel/{{ansible_distribution_major_version}}/{{ansible_architecture}}/zabbix-release-{{zabbix_version}}-1.el{{ansible_distribution_major_version}}.noarch.rpm
     state: installed
     disable_gpg_check: true
-  when: zabbix_installed.stat.exists == False
+  when: zabbix_installed.stat.exists == False and ansible_facts.distribution_major_version | int < 9
+
+- name: RedHat 9 | Install Zabbix Repository
+  ansible.builtin.yum:
+    name: http://repo.zabbix.com/zabbix/{{zabbix_version}}/rhel/{{ansible_distribution_major_version}}/{{ansible_architecture}}/zabbix-release-{{zabbix_version}}-3.el{{ansible_distribution_major_version}}.noarch.rpm
+    state: installed
+    disable_gpg_check: true
+  when: zabbix_installed.stat.exists == False and ansible_facts.distribution_major_version == "9"
 
 - name: RedHat | Install the Python 2 MySQLB module
   ansible.builtin.pip: 
