@@ -18,7 +18,7 @@ def main():
 		print 'Unable to parse email address'
 		exit(1)
 
-	command = "grep -R %s /var/cpanel/users | grep -v system | gawk -F':' '{print $1}' | head -n 1 | xargs grep USER | gawk -F'=' '{print $2}'" % domain
+	command = "grep -R %s /var/cpanel/users | grep -v system | gawk -F':' '{print $1}' | head -n 1 | xargs egrep ^USER | gawk -F'=' '{print $2}'" % domain
 	email_owner,error  = subprocess.Popen(command, universal_newlines=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 
 	api_call = "uapi --user=%s --output=json Email suspend_outgoing email=%s" % (email_owner.strip('\n'), urllib.quote_plus(email))
