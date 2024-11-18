@@ -4,5 +4,6 @@
   ],
   "spellright.documentTypes": [
     "latex"
-  ]
+  ],
+  "ansible.python.interpreterPath": "/usr/bin/python3"
 }
