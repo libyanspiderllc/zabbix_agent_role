@@ -109,3 +109,19 @@
     validate: 'visudo -cf %s'
   when: cloudlinux_installed
   notify: restart_zabbix_agent
+
+- name: Ensure override directory exists
+  file:
+    path: /etc/systemd/system/zabbix-agent.service.d
+    state: directory
+  when: ansible_distribution_major_version | int == 9
+
+- name: Create drop-in override file
+  copy:
+    dest: /etc/systemd/system/zabbix-agent.service.d/override.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/sbin/zabbix_agentd -f -c /etc/zabbix/zabbix_agentd.conf
+  notify: Reload systemd and restart zabbix-agent
+  when: ansible_distribution_major_version | int == 9
