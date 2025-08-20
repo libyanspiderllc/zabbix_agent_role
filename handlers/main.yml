@@ -14,3 +14,10 @@
   service:
     name: snmpd
     state: restarted
+
+- name: Reload systemd and restart zabbix-agent
+  ansible.builtin.systemd:
+    name: zabbix-agent
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
