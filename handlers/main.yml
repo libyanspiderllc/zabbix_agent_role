@@ -21,3 +21,8 @@
     daemon_reload: yes
     state: restarted
     enabled: yes
+
+- name: win_restart_zabbix_agent
+  win_service:
+    name: "Zabbix Agent"
+    state: restarted

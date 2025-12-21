@@ -27,3 +27,44 @@
   when: snmpd_installed.stat.exists == true and snmpd_community|length > 0
   notify: win_restart_snmpd
   ignore_errors: yes
+
+- name: Windows | Copy zabbix agent user parameters files
+  win_copy:
+    src: "{{ item }}"
+    dest: C:\Program Files\Zabbix Agent\zabbix_agentd.d\
+    owner: Administrator
+  with_fileglob:
+    - files/windows/zabbix_agentd.d/*
+  notify: win_restart_zabbix_agent
+
+- name: Windows | Copy zabbix scripts
+  win_copy:
+    src: "{{ item }}"
+    dest: C:\Program Files\Zabbix Agent\scripts\
+    owner: zabbix
+  with_fileglob:
+    - files/windows/scripts/*
+  notify: win_restart_zabbix_agent
+
+- name: Windows | Add custom AllowKey option to Zabbix Agent config
+  win_lineinfile:
+    path: C:\Program Files\Zabbix Agent\zabbix_agentd.conf
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - 'AllowKey=system.run[powershell -NoProfile -ExecutionPolicy bypass -File "C:\Program Files\Zabbix Agent\scripts\ListUninstalledUpdates.ps1"]'
+  notify: win_restart_zabbix_agent
+
+- name: Windows | Ensure DenyKey for system.run[] is present
+  win_lineinfile:
+    path: C:\Program Files\Zabbix Agent\zabbix_agentd.conf
+    line: 'DenyKey=system.run[*]'
+    state: present
+  notify: win_restart_zabbix_agent
+
+- name: Windows | Set execution timeout to 30 seconds
+  win_lineinfile:
+    path: C:\Program Files\Zabbix Agent\zabbix_agentd.conf
+    line: 'Timeout=30'
+    state: present
+  notify: win_restart_zabbix_agent
