@@ -99,3 +99,17 @@
     name: snmpd
     state: started
     enabled: true
+
+- name: Linux | Register variable for zabbix_check_update.sh path
+  ansible.builtin.stat:
+    path: /usr/local/sbin/zabbix_check_update.sh
+  register: zabbix_check_update_script_path
+
+- name: Linux | Check daily crontab for zabbix_check_update.sh
+  ansible.builtin.cron:
+    name: "Zabbix Check Updates Script"
+    user: root
+    special_time: daily
+    job: "/usr/local/sbin/zabbix_check_update.sh >/dev/null 2>&1"
+  when: zabbix_check_update_script_path.stat.exists == True
+  
