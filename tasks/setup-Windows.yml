@@ -53,6 +53,7 @@
     state: present
   with_items:
     - 'AllowKey=system.run[powershell -NoProfile -ExecutionPolicy bypass -File "C:\Program Files\Zabbix Agent\scripts\ListUninstalledUpdates.ps1"]'
+    - 'AllowKey=system.run[powershell -NoProfile -ExecutionPolicy bypass -File "C:\Program Files\Zabbix Agent\scripts\Check-FirewallStatus.ps1"]'
   notify: win_restart_zabbix_agent
 
 - name: Windows | Ensure DenyKey for system.run[] is present
