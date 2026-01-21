@@ -44,4 +44,5 @@ zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/cloudlinux_securelinks_status.sh
 zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/spamexpert.sh
 zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/phisherman_utils.sh
 zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/find_encoded_cron_jobs.sh
+zabbix ALL=(ALL) NOPASSWD: /usr/local/sbin/cPanel_uapi_script.sh
 Defaults:zabbix        !requiretty
